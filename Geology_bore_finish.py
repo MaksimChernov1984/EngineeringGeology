@@ -164,14 +164,14 @@ class Log(tk.Toplevel):
         self.btn_ok_log = tk.Button(self, text='Добавить',bg='#F4A460', activebackground='#FF6347', bd=0)
         self.btn_ok_log.bind('<Button-1>', lambda event: self.view.records(self.entry_bore.get(),
                                                                            self.entry_layer_base.get(),
-                                                                  self.entry_layer_description.get(),
-                                                                  self.combobox_sample_type.get(),
-                                                                  self.entry_sample_depth.get()))
-        self.btn_ok_log.bind('<Return>', lambda event: self.view.records(self.entry_bore.get(),
-                                                                           self.entry_layer_base.get(),
                                                                            self.entry_layer_description.get(),
                                                                            self.combobox_sample_type.get(),
                                                                            self.entry_sample_depth.get()))
+        self.btn_ok_log.bind('<Return>', lambda event: self.view.records(self.entry_bore.get(),
+                                                                         self.entry_layer_base.get(),
+                                                                         self.entry_layer_description.get(),
+                                                                         self.combobox_sample_type.get(),
+                                                                         self.entry_sample_depth.get()))
         self.btn_ok_log.place(x=50, y=160)
 
 
@@ -199,15 +199,15 @@ class Update(Log):
         self.btn_edit.place(x=50, y=165)
         self.btn_edit.bind('<Button-1>', lambda event: self.view.update_records(self.entry_bore.get(),
                                                                                 self.entry_layer_base.get(),
-                                                                           self.entry_layer_description.get(),
-                                                                           self.combobox_sample_type.get(),
-                                                                           self.entry_sample_depth.get()))
-        self.btn_edit.bind('<Button-1>', lambda event: self.destroy(), add='+')
-        self.btn_edit.bind('<Return>', lambda event: self.view.update_records(self.entry_bore.get(),
-                                                                                self.entry_layer_base.get(),
                                                                                 self.entry_layer_description.get(),
                                                                                 self.combobox_sample_type.get(),
                                                                                 self.entry_sample_depth.get()))
+        self.btn_edit.bind('<Button-1>', lambda event: self.destroy(), add='+')
+        self.btn_edit.bind('<Return>', lambda event: self.view.update_records(self.entry_bore.get(),
+                                                                              self.entry_layer_base.get(),
+                                                                              self.entry_layer_description.get(),
+                                                                              self.combobox_sample_type.get(),
+                                                                              self.entry_sample_depth.get()))
         self.btn_edit.bind('<Return>', lambda event: self.destroy(), add='+')
         self.btn_ok_log.destroy()
 
