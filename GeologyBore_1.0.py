@@ -37,17 +37,23 @@ class Main(tk.Frame):
 
         # позже добавлю кнопку с чертежём
 
-        self.tree = ttk.Treeview(self, columns=('ID', 'bore', 'layer_base', 'layer_description','sample_type',
-                                                'sample_depth'), height=15, show='headings')
+        self.tree = ttk.Treeview(self, columns=('ID', 'bore_number', 'bore_date', 'bore_abs', 'layer_roof', 'layer_base', 
+                                                'layer_description','sample_type', 'sample_depth'), height=15, show='headings')
         self.tree.column('ID', width=30, anchor=tk.CENTER)
-        self.tree.column('bore', width=150, anchor=tk.CENTER)
-        self.tree.column('layer_base', width=150, anchor=tk.CENTER)
-        self.tree.column('layer_description', width=500, anchor=tk.W)
+        self.tree.column('bore_number', width=65, anchor=tk.CENTER)
+        self.tree.column('bore_date', width=80, anchor=tk.CENTER)
+        self.tree.column('bore_abs', width=65, anchor=tk.CENTER)
+        self.tree.column('layer_roof', width=65, anchor=tk.CENTER)
+        self.tree.column('layer_base', width=80, anchor=tk.CENTER)
+        self.tree.column('layer_description', width=460, anchor=tk.W)
         self.tree.column('sample_type', width=105, anchor=tk.CENTER)
         self.tree.column('sample_depth', width=130, anchor=tk.CENTER)
 
         self.tree.heading('ID', text='ID')
-        self.tree.heading('bore', text='Скважина')
+        self.tree.heading('bore_number', text='N скв.')
+        self.tree.heading('bore_date', text='Дата')
+        self.tree.heading('bore_abs', text='Абс.отм.')
+        self.tree.heading('layer_roof', text='Кровля ИГЭ')
         self.tree.heading('layer_base', text='Подошва ИГЭ')
         self.tree.heading('layer_description', text='Описание')
         self.tree.heading('sample_type', text='Вид образца')
@@ -61,17 +67,18 @@ class Main(tk.Frame):
 
 
     # добавить записи
-    def records(self, bore, layer_base, layer_description, sample_type, sample_depth):
-        self.db.insert_data(bore, layer_base, layer_description, sample_type, sample_depth)
+    def records(self, bore_number, bore_date, bore_abs, layer_roof, layer_base, layer_description, sample_type, sample_depth):
+        self.db.insert_data(bore_number, bore_date, bore_abs, layer_roof, layer_base, layer_description, sample_type, sample_depth)
         self.view_records()
 
 
     # редактировать записи
-    def update_records(self, bore, layer_base, layer_description, sample_type, sample_depth):
+    def update_records(self, bore_number, bore_date, bore_abs, layer_roof, layer_base, layer_description, sample_type, sample_depth):
         self.db.c.execute(
-            '''UPDATE engineering_geology SET bore=?, layer_base=?, layer_description=?, sample_type=?, sample_depth=? 
-            WHERE ID=?''', (bore, layer_base, layer_description, sample_type, sample_depth,
-                            self.tree.set(self.tree.selection()[0], '#1')))
+            '''UPDATE engineering_geology SET bore_number=?, bore_date=?, bore_abs=?, layer_roof=?, layer_base=?, 
+            layer_description=?, sample_type=?, sample_depth=? WHERE ID=?''', 
+            (bore_number, bore_date, bore_abs, layer_roof, layer_base, layer_description, sample_type, sample_depth,
+            self.tree.set(self.tree.selection()[0], '#1')))
         self.db.conn.commit()
         self.view_records()
 
@@ -92,9 +99,9 @@ class Main(tk.Frame):
         self.view_records()
 
 
-    def search_records(self, bore):
-        bore = (bore,)  # если надо поиск из любой позиции (напр., в центре слова), то (%+bore+%,)
-        self.db.c.execute('''SELECT * FROM engineering_geology WHERE bore LIKE ? ORDER BY layer_base''', bore)
+    def search_records(self, bore_number):
+        bore_number = (bore_number,)  # если надо поиск из любой позиции (напр., в центре слова), то (%+bore+%,)
+        self.db.c.execute('''SELECT * FROM engineering_geology WHERE bore_number LIKE ? ORDER BY layer_roof''', bore_number)
         [self.tree.delete(i) for i in self.tree.get_children()]  # проходим циклом всю таблицу и очищаем её
         [self.tree.insert('', 'end', values=row) for row in self.db.c.fetchall()]  # добавляем данные
 
@@ -138,46 +145,64 @@ class Log(tk.Toplevel):
         toolbar = tk.Frame(bg='#FFE4C4')
         toolbar.pack(side=tk.TOP, fill=tk.X)
 
-        label_bore = tk.Label(self, text='№ скв.', bg='#FFE4C4').place(x=5, y=5)
-        label_layer_base = tk.Label(self, text='Подошва элемента', bg='#FFE4C4').place(x=5, y=35)
-        label_layer_description = tk.Label(self, text='Описание элемента', bg='#FFE4C4').place(x=5, y=65)
-        label_sample_type = tk.Label(self, text='Вид образца', bg='#FFE4C4').place(x=5, y=95)
-        label_layer_description = tk.Label(self, text='Глубина образца', bg='#FFE4C4').place(x=5, y=125)
+        label_bore_number = tk.Label(self, text='№ скв.', bg='#FFE4C4').place(x=5, y=5)
+        label_bore_date = tk.Label(self, text='Дата проходки', bg='#FFE4C4').place(x=5, y=35)
+        label_bore_abs = tk.Label(self, text='Абс.отметка', bg='#FFE4C4').place(x=5, y=65)
+        label_layer_base = tk.Label(self, text='Кровля ИГЭ', bg='#FFE4C4').place(x=5, y=95)
+        label_layer_base = tk.Label(self, text='Подошва ИГЭ', bg='#FFE4C4').place(x=5, y=125)
+        label_layer_description = tk.Label(self, text='Описание ИГЭ', bg='#FFE4C4').place(x=5, y=155)
+        label_sample_type = tk.Label(self, text='Вид образца', bg='#FFE4C4').place(x=5, y=185)
+        label_layer_description = tk.Label(self, text='Глубина образца', bg='#FFE4C4').place(x=5, y=215)
 
-        self.entry_bore = ttk.Entry(self, width=15)
-        self.entry_bore.place(x=150, y=5)
+        self.entry_bore_number = ttk.Entry(self, width=15)
+        self.entry_bore_number.place(x=150, y=5)
+
+        self.entry_bore_date = ttk.Entry(self, width=15)
+        self.entry_bore_date.place(x=150, y=35)
+
+        self.entry_bore_abs = ttk.Entry(self, width=15)
+        self.entry_bore_abs.place(x=150, y=65)
+
+        self.entry_layer_roof = ttk.Entry(self, width=15)
+        self.entry_layer_roof.place(x=150, y=95)
 
         self.entry_layer_base = ttk.Entry(self, width=15)
-        self.entry_layer_base.place(x=150, y=35)
+        self.entry_layer_base.place(x=150, y=125)
 
         self.entry_layer_description = ttk.Entry(self, width=80)
-        self.entry_layer_description.place(x=150, y=65)
+        self.entry_layer_description.place(x=150, y=155)
 
-        self.combobox_sample_type = ttk.Combobox(self, width=15, values=[u'Монолит', u'Нарушенный'])
-        self.combobox_sample_type.place(x=150, y=95)
+        self.combobox_sample_type = ttk.Combobox(self, width=15, values=[u'Монолит', u'Нарушенный', u'Коррозия', u'Вода'])
+        self.combobox_sample_type.place(x=150, y=185)
         self.combobox_sample_type.current(0)
 
         self.entry_sample_depth = ttk.Entry(self, width=15)
-        self.entry_sample_depth.place(x=150, y=125)
+        self.entry_sample_depth.place(x=150, y=215)
 
 
         self.btn_ok_log = tk.Button(self, text='Добавить',bg='#F4A460', activebackground='#FF6347', bd=0)
-        self.btn_ok_log.bind('<Button-1>', lambda event: self.view.records(self.entry_bore.get(),
+        self.btn_ok_log.bind('<Button-1>', lambda event: self.view.records(self.entry_bore_number.get(),
+                                                                           self.entry_bore_date.get(),
+                                                                           self.entry_bore_abs.get(),
+                                                                           self.entry_layer_roof.get(),
                                                                            self.entry_layer_base.get(),
                                                                            self.entry_layer_description.get(),
                                                                            self.combobox_sample_type.get(),
                                                                            self.entry_sample_depth.get()))
-        self.btn_ok_log.bind('<Return>', lambda event: self.view.records(self.entry_bore.get(),
+        self.btn_ok_log.bind('<Return>', lambda event: self.view.records(self.entry_bore_number.get(),
+                                                                         self.entry_bore_date.get(),
+                                                                         self.entry_bore_abs.get(),
+                                                                         self.entry_layer_roof.get(),
                                                                          self.entry_layer_base.get(),
                                                                          self.entry_layer_description.get(),
                                                                          self.combobox_sample_type.get(),
                                                                          self.entry_sample_depth.get()))
-        self.btn_ok_log.place(x=50, y=160)
+        self.btn_ok_log.place(x=50, y=255)
 
 
         btn_cancel_log = tk.Button(self, text='Завершить добавление', command=self.destroy,
                                    bg='#F4A460', activebackground='#FF6347', bd=0)
-        btn_cancel_log.place(x=50, y=230)
+        btn_cancel_log.place(x=50, y=285)
 
         self.grab_set()
         self.focus_set()
@@ -196,14 +221,20 @@ class Update(Log):
     def init_edit(self):
         self.title('Редактировать')
         self.btn_edit = tk.Button(self, text='Редактировать', bg='#F4A460', activebackground='#FF6347', bd=0)
-        self.btn_edit.place(x=50, y=165)
-        self.btn_edit.bind('<Button-1>', lambda event: self.view.update_records(self.entry_bore.get(),
+        self.btn_edit.place(x=50, y=255)
+        self.btn_edit.bind('<Button-1>', lambda event: self.view.update_records(self.entry_bore_number.get(),
+                                                                                self.entry_bore_date.get(),
+                                                                                self.entry_bore_abs.get(),
+                                                                                self.entry_layer_roof.get(),
                                                                                 self.entry_layer_base.get(),
                                                                                 self.entry_layer_description.get(),
                                                                                 self.combobox_sample_type.get(),
                                                                                 self.entry_sample_depth.get()))
         self.btn_edit.bind('<Button-1>', lambda event: self.destroy(), add='+')
-        self.btn_edit.bind('<Return>', lambda event: self.view.update_records(self.entry_bore.get(),
+        self.btn_edit.bind('<Return>', lambda event: self.view.update_records(self.entry_bore_number.get(),
+                                                                              self.entry_bore_date.get(),
+                                                                              self.entry_bore_abs.get(),
+                                                                              self.entry_layer_roof.get(),
                                                                               self.entry_layer_base.get(),
                                                                               self.entry_layer_description.get(),
                                                                               self.combobox_sample_type.get(),
@@ -216,12 +247,21 @@ class Update(Log):
         self.db.c.execute('''SELECT * FROM engineering_geology WHERE id=?''',
                           (self.view.tree.set(self.view.tree.selection()[0],'#1')))
         row = self.db.c.fetchone()  # fetchone возвращает кортеж
-        self.entry_bore.insert(0, row[1])
-        self.entry_layer_base.insert(0, row[2])
-        self.entry_layer_description.insert(0, row[3])
-        if row[3] != 'Монолит':
+        self.entry_bore_number.insert(0, row[1])
+        self.entry_bore_date.insert(0, row[2])
+        self.entry_bore_abs.insert(0, row[3])
+        self.entry_layer_roof.insert(0, row[4])
+        self.entry_layer_base.insert(0, row[5])
+        self.entry_layer_description.insert(0, row[6])
+        if row[7] == 'Монолит':
+            self.combobox_sample_type.current(0)
+        elif row[7] == 'Нарушенный':
             self.combobox_sample_type.current(1)
-        self.entry_sample_depth.insert(0, row[5])
+        elif row[7] == 'Коррозия':
+            self.combobox_sample_type.current(2)
+        elif row[7] == 'Вода':
+            self.combobox_sample_type.current(3)
+        self.entry_sample_depth.insert(0, row[8])
 
 
 # окно Поиск
@@ -259,19 +299,20 @@ class Search(tk.Toplevel):
 # база данных
 class DB:
     def __init__(self):
-        self.conn = sqlite3.connect('engineering_geology.db')
+        self.conn = sqlite3.connect('geolog.db')
         self.c = self.conn.cursor()
         self.c.execute(
             '''CREATE TABLE IF NOT EXISTS engineering_geology
-            (id integer primary key, bore text, layer_base real, layer_description text, sample_type text, 
-            sample_depth real)'''
+            (id integer primary key, bore_number text, bore_date date, bore_abs real, layer_roof real, layer_base real, 
+            layer_description text, sample_type text, sample_depth real)'''
         )
         self.conn.commit()
 
 
-    def insert_data(self, bore, layer_base, layer_description, sample_type, sample_depth):
-        self.c.execute('''INSERT INTO engineering_geology (bore, layer_base, layer_description, sample_type, 
-        sample_depth) VALUES (?, ?, ?, ?, ?)''', (bore, layer_base, layer_description, sample_type, sample_depth))
+    def insert_data(self, bore_number, bore_date, bore_abs, layer_roof, layer_base, layer_description, sample_type, sample_depth):
+        self.c.execute('''INSERT INTO engineering_geology (bore_number, bore_date, bore_abs, layer_roof, layer_base, 
+            layer_description, sample_type, sample_depth) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''', 
+            (bore_number, bore_date, bore_abs, layer_roof, layer_base, layer_description, sample_type, sample_depth))
         self.conn.commit()
 
 
@@ -286,7 +327,7 @@ if __name__=='__main__':
     app = Main(root)
     app.pack()
     root.title('Электронный журнал ')
-    root.geometry('1100x600+20+20')
+    root.geometry('1110x600+20+20')
     root.configure(bg='#FFE4C4')
     root.resizable(False, False)
     root.mainloop()
