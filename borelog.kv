@@ -1,10 +1,16 @@
+#:import Factory kivy.factory.Factory
+
+<sp@SpinnerOption>
+    color: 0, 1, 0, 1
+    background_color: 0.18, 0.31, 0.31, 1
+
 <BoxLayout>
     orientation: 'vertical'
     size: root.width, root.height
     padding: 20
     canvas.before:
         Color:
-            rgba: (0.18, 0.31, 0.31, 1)
+            rgba: (0.09, 0.16, 0.17, 1)
         RoundedRectangle:
             size: self.size
             pos: self.pos
@@ -20,7 +26,7 @@
     size: self.size
     pos_hint_x: {'center_x': 0.5}
     color: (1, 0, 0)
-    background_color: (0.5, 0, 0, 1)
+    background_color: (.5, 0, 0, 1)
     background_normal: ''
     canvas.before:
         Color:
@@ -33,22 +39,34 @@
     background_color: (0.18, 0.31, 0.31, 1)
     background_normal: ''
     color: (1, 1, 1, 1)
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)
+        Line:
+            width: 1
+            rectangle: self.x, self.y, self.width, self.height
 
 <Label>
     font_size: '15sp'
     color: (1, 1, 1, 1)
     text_size: self.size
+    halign: 'center'
+    valign: 'middle'
     markup: True 
 
-<HeadLabel@Label>
-    halign: 'center'
+<LLabel@Label>
+    halign: 'left'
+
+<RLabel@Label>
+    halign: 'right'
 
 <Spinner@Spinner>
     halign: 'center'
     valign: 'middle'
-    text_size: self.size
+    text_size: '15sp'
     size_hint: (1.5, 1)
     pos_hint: {'right': 1, 'center_y': 0.5}
+    sync_height: True
     background_color: (0.18, 0.31, 0.31, 1)
     background_normal: ''
     canvas.before:
@@ -57,20 +75,19 @@
         Line:
             width: 2
             rectangle: self.x, self.y, self.width, self.height
+    option_cls: Factory.sp
 
 <TextInput>
     multiline: 'False'
     halign: 'center'
     valign: 'middle'
+    color: (0, 0, 0, 1)
     size_hint: (1.5, 1)
     pos_hint: {'left': 0, 'center_y': 0.5}
-    background_color: (0.18, 0.31, 0.31, 1)
+    background_color: (1, 1, 1, 1)
     canvas.before:
         Color:
-            rgba: (1, 1, 1, 1)
-        Line:
-            width: 1
-            rectangle: self.x, self.y, self.width, self.height
+            rgba: (0, 0, 0, 1)
 
 <DscrTextInput@TextInput>
     multiline: True
@@ -90,18 +107,24 @@
     TabbedPanelItem:
         text: 'Начать'
         BoxLayout:
-            HeadLabel:
+            Label:
                 text: '[b]Электронный журнал[/b]\nинженерно-геологических скважин'
             Label:
+                text: '_____________________________________________________'
+            LLabel:
                 text: 'Для начала записи - НАЧАТЬ. Будет создан либо откроется эксель-файл.'
-            Label:
+            LLabel:
                 text: 'После заполнения данных по скважине - ВВЕСТИ. Данные зафиксируются на третьей вкладке.'
-            Label:
+            LLabel:
                 text: 'При необходимости добавить образец - ввести только данные о новом образце, остальное оставить.'
-            Label:
+            LLabel:
                 text: 'При необходимости добавить ИГЭ - ввести только данные о новом ИГЭ, остальное оставить.'
-            Label:
+            LLabel:
                 text: 'После проверки - ЗАПОМНИТЬ. Данные будут записаны в эксель-файл.'
+            Label:
+                text: '_____________________________________________________'
+            Label:
+                text: ''
             HorBoxLayout:
                 MyButton:
                     id: btn_start
@@ -112,57 +135,60 @@
         text: 'Ввести'
         BoxLayout:
             HorBoxLayout:
-                Label:
-                    text: 'No объекта'
+                RLabel:
+                    text: 'No объекта..'
                 TextInput:
                     id: obj_nm
             HorBoxLayout:
-                Label:
-                    text: 'No скважины'
+                RLabel:
+                    text: 'No скважины..'
                 TextInput:
                     id: bore_nm
             HorBoxLayout:
-                Label:
-                    text: 'Дата проходки'
+                RLabel:
+                    text: 'Дата проходки..'
                 TextInput:
                     id: bore_date
             HorBoxLayout:
-                Label:
-                    text: 'Абс. отметка'
+                RLabel:
+                    text: 'Абс. отметка..'
                 TextInput:
                     id: bore_abs
             HorBoxLayout:
-                Label:
-                    text: 'Глуб. скважины'
+                RLabel:
+                    text: 'Глуб. скважины..'
                 TextInput:
                     id: bore_depth
             HorBoxLayout:
-                Label:
-                    text: 'Глуб. кровли ИГЭ'
+                RLabel:
+                    text: 'Глуб. кровли ИГЭ..'
                 TextInput:
                     id: layer_roof
             HorBoxLayout:
-                Label:
-                    text: 'Описание ИГЭ'
+                RLabel:
+                    text: 'Описание ИГЭ..'
                 DscrTextInput:
                     id: layer_descr
             HorBoxLayout:
-                Label:
-                    text: 'Вид образца'
+                RLabel:
+                    text: 'Вид образца..'
                 Spinner:
                     id: sample_type
                     text: 'Вид образца'
                     values: 'монолит', 'нарушенный', 'коррозия', 'вода'
             HorBoxLayout:
-                Label:
-                    text: 'Глуб. образца'
+                RLabel:
+                    text: 'Глуб. образца..'
                 TextInput:
                     id: sample_depth
             HorBoxLayout:
-                Label:
-                    text: 'Глуб. подошвы ИГЭ'
+                RLabel:
+                    text: 'Глуб. подошвы ИГЭ..'
                 TextInput:
                     id: layer_depth
+            HorBoxLayout:
+                RLabel:
+                    text: ''
             HorBoxLayout:
                 MyButton:
                     id: btn_bore
@@ -172,36 +198,38 @@
     TabbedPanelItem:
         text: 'Запомнить' 
         BoxLayout:
-            Label:
+            LLabel:
                 id: lbl_obj_nm
                 text: 'Номер объекта'
-            Label:
+            LLabel:
                 id: lbl_bore_nm
                 text: 'Номер скважины'
-            Label:
+            LLabel:
                 id: lbl_bore_date
                 text: 'Дата проходки'
-            Label:
+            LLabel:
                 id: lbl_bore_abs
                 text: 'Абс. отметка'
-            Label:
+            LLabel:
                 id: lbl_bore_depth
                 text: 'Глубина скважины'
-            Label:
+            LLabel:
                 id: lbl_layer_roof
                 text: 'Глубина кровли ИГЭ'
-            Label:
+            LLabel:
                 id: lbl_layer_descr
                 text: 'Описание ИГЭ'
-            Label:
+            LLabel:
                 id: lbl_sample_type
                 text: 'Вид образца'
-            Label:
+            LLabel:
                 id: lbl_sample_depth
                 text: 'Глубина образца'
-            Label:
+            LLabel:
                 id: lbl_layer_depth
                 text: 'Глубина ИГЭ'
+            Label:
+                text: ''
             HorBoxLayout:
                 MyButton:
                     id: btn_submit
