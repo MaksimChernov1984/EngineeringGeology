@@ -105,12 +105,19 @@ class Main(tk.Frame):
         self.db.conn.commit()
         self.view_records()
 
-
-    def search_records(self, bore_nm):
-        bore_nm = (bore_nm,)  # если надо поиск из любой позиции (напр., в центре слова), то (%+bore+%,)
-        self.db.c.execute('''SELECT * FROM borelog WHERE bore_nm LIKE ? ORDER BY layer_roof''', bore_nm)
+    # искать записи по номеру объекта
+    def search_records_obj(self, obj_nm):
+        obj_nm = (obj_nm,) # если надо поиск из любой позиции (напр., в центре слова), то (%+bore+%,)
+        self.db.c.execute('''SELECT * FROM borelog WHERE obj_nm LIKE ? ORDER BY bore_nm''', obj_nm)
         [self.tree.delete(i) for i in self.tree.get_children()]  # проходим циклом всю таблицу и очищаем её
         [self.tree.insert('', 'end', values=row) for row in self.db.c.fetchall()]  # добавляем данные
+
+    # искать записи по дате
+    def search_records_date(self, bore_date):
+        bore_date = (bore_date,) 
+        self.db.c.execute('''SELECT * FROM borelog WHERE bore_date LIKE ? ORDER BY obj_nm''', bore_date)
+        [self.tree.delete(i) for i in self.tree.get_children()] 
+        [self.tree.insert('', 'end', values=row) for row in self.db.c.fetchall()] 
 
 
     # открыть журнал
@@ -299,26 +306,37 @@ class Search(tk.Toplevel):
 
     def init_search(self):
         self.title('Поиск')
-        self.geometry('400x150+300+200')
+        self.geometry('530x150+300+200')
         self.configure(bg='#FFE4C4')
         self.resizable(False, False)
 
-        lbl_search = tk.Label(self, text='Поиск скважины', bg='#FFE4C4')
-        lbl_search.place(x=10, y=10)
+        lbl_search_obj = tk.Label(self, text='N объекта', bg='#FFE4C4')
+        lbl_search_obj.place(x=10, y=10)
+        lbl_search_bore = tk.Label(self, text='Дата', bg='#FFE4C4')
+        lbl_search_bore.place(x=10, y=40)
 
-        self.entry_search = ttk.Entry(self)
-        self.entry_search.place(x=150, y=10, width=170)
+        self.entry_search_obj = ttk.Entry(self)
+        self.entry_search_obj.place(x=150, y=10, width=170)
+        self.entry_search_date = ttk.Entry(self)
+        self.entry_search_date.place(x=150, y=40, width=170)
 
-        btn_search = tk.Button(self, text='Поиск', bg='#F4A460', activebackground='#FF6347', bd=0)
-        btn_search.bind('<Button-1>', lambda event: self.view.search_records(self.entry_search.get()))
-        btn_search.bind('<Button-1>', lambda event: self.destroy(), add='+')
-        btn_search.bind('<Return>', lambda event: self.view.search_records(self.entry_search.get()))
-        btn_search.bind('<Return>', lambda event: self.destroy(), add='+')
-        btn_search.place(x=10, y=70)
+        btn_search_obj = tk.Button(self, text='Поиск по объекту', bg='#F4A460', activebackground='#FF6347', bd=0)
+        btn_search_obj.bind('<Button-1>', lambda event: self.view.search_records_obj(self.entry_search_obj.get()))
+        btn_search_obj.bind('<Button-1>', lambda event: self.destroy(), add='+')
+        btn_search_obj.bind('<Return>', lambda event: self.view.search_records_obj(self.entry_search_obj.get()))
+        btn_search_obj.bind('<Return>', lambda event: self.destroy(), add='+')
+        btn_search_obj.place(x=350, y=5)
+
+        btn_search_date = tk.Button(self, text='Поиск по дате', bg='#F4A460', activebackground='#FF6347', bd=0)
+        btn_search_date.bind('<Button-1>', lambda event: self.view.search_records_date(self.entry_search_date.get()))
+        btn_search_date.bind('<Button-1>', lambda event: self.destroy(), add='+')
+        btn_search_date.bind('<Return>', lambda event: self.view.search_records_date(self.entry_search_date.get()))
+        btn_search_date.bind('<Return>', lambda event: self.destroy(), add='+')
+        btn_search_date.place(x=350, y=40)
 
         btn_cancel = tk.Button(self, text='Закрыть', bg='#F4A460', activebackground='#FF6347', bd=0,
                                command=self.destroy)
-        btn_cancel.place(x=10, y=100)
+        btn_cancel.place(x=10, y=110)
 
 
 # база данных
