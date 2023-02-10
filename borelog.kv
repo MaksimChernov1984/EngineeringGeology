@@ -1,16 +1,12 @@
 #:import Factory kivy.factory.Factory
 
-<sp@SpinnerOption>
-    color: 0, 1, 0, 1
-    background_color: 0.18, 0.31, 0.31, 1
-
 <BoxLayout>
     orientation: 'vertical'
     size: root.width, root.height
     padding: 20
     canvas.before:
         Color:
-            rgba: (0.09, 0.16, 0.17, 1)
+            rgba: (0.81, 0.95, 0.7, 1)
         RoundedRectangle:
             size: self.size
             pos: self.pos
@@ -25,30 +21,30 @@
     size_hint: (0.5, 1)
     size: self.size
     pos_hint_x: {'center_x': 0.5}
-    color: (1, 0, 0)
-    background_color: (.5, 0, 0, 1)
+    color: (1, 1, 1, 1)
+    background_color: (0.43, 0.61, 0.43, 1)
     background_normal: ''
     canvas.before:
         Color:
-            rgba: (1, 0, 0, 1)
+            rgba: (0, 0, 0, 1)
         Line:
             width: 2
             rectangle: self.x, self.y, self.width, self.height
 
 <TabbedPanelItem>
-    background_color: (0.18, 0.31, 0.31, 1)
+    background_color: (0.81, 0.95, 0.7, 1)
     background_normal: ''
     color: (1, 1, 1, 1)
     canvas.before:
         Color:
-            rgba: (1, 1, 1, 1)
+            rgba: (0, 0, 0, 1)
         Line:
             width: 1
             rectangle: self.x, self.y, self.width, self.height
 
 <Label>
     font_size: '15sp'
-    color: (1, 1, 1, 1)
+    color: (0, 0, 0, 1)
     text_size: self.size
     halign: 'center'
     valign: 'middle'
@@ -67,22 +63,26 @@
     size_hint: (1.5, 1)
     pos_hint: {'right': 1, 'center_y': 0.5}
     sync_height: True
-    background_color: (0.18, 0.31, 0.31, 1)
+    background_color: (0.81, 0.95, 0.7, 1)
     background_normal: ''
     canvas.before:
         Color:
-            rgba: (1, 1, 1, 1)
+            rgba: (0, 0, 0, 1)
         Line:
-            width: 2
+            width: 1
             rectangle: self.x, self.y, self.width, self.height
     option_cls: Factory.sp
+
+<sp@SpinnerOption>
+    color: 1, 1, 1, 1
+    background_color: 0.81, 0.95, 0.7, 1
 
 <TextInput>
     multiline: 'False'
     halign: 'center'
     valign: 'middle'
     color: (0, 0, 0, 1)
-    size_hint: (1.5, 1)
+    size_hint: (1.5, 0.8)
     pos_hint: {'left': 0, 'center_y': 0.5}
     background_color: (1, 1, 1, 1)
     canvas.before:
@@ -91,6 +91,7 @@
 
 <DscrTextInput@TextInput>
     multiline: True
+    size_hint_y: (1.5)
 
 <Container>
     halign: 'center'
@@ -185,7 +186,7 @@
                 RLabel:
                     text: 'Глуб. подошвы ИГЭ..'
                 TextInput:
-                    id: layer_depth
+                    id: layer_base
             HorBoxLayout:
                 RLabel:
                     text: ''
@@ -226,7 +227,7 @@
                 id: lbl_sample_depth
                 text: 'Глубина образца'
             LLabel:
-                id: lbl_layer_depth
+                id: lbl_layer_base
                 text: 'Глубина ИГЭ'
             Label:
                 text: ''
