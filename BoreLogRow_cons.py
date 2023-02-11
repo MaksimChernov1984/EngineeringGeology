@@ -1,4 +1,4 @@
-f = open('BoreLogRow.xls', 'a')
+f = open('BoreLogRow.xlsx', 'a')
 bore_nm = input('Электронный журнал скважины No: ')
 f.write('Электронный журнал скважины No: '+bore_nm+'\n')
 bore_date = input('Дата: ')
